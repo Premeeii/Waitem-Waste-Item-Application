@@ -1,53 +1,43 @@
 package kittpas.waitem.dto;
 
+import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class CreateOrderRequest {
+
+    @NotNull(message = "Buyer ID is required")
     private Long buyerId;
-    private UUID itemId;
+
+    @NotNull(message = "Item ID is required")
+    private java.util.UUID itemId;
+
     private BigDecimal totalPrice;
-    private String pickupCode;
+    private String pickupAddress;
+    private BigDecimal pickupLatitude;
+    private BigDecimal pickupLongitude;
+    private String pickupNote;
 
     public CreateOrderRequest() {
     }
 
-    public CreateOrderRequest(Long buyerId, UUID itemId, BigDecimal totalPrice, String pickupCode) {
-        this.buyerId = buyerId;
-        this.itemId = itemId;
-        this.totalPrice = totalPrice;
-        this.pickupCode = pickupCode;
-    }
+    public Long getBuyerId() { return buyerId; }
+    public void setBuyerId(Long buyerId) { this.buyerId = buyerId; }
 
-    public Long getBuyerId() {
-        return buyerId;
-    }
+    public java.util.UUID getItemId() { return itemId; }
+    public void setItemId(java.util.UUID itemId) { this.itemId = itemId; }
 
-    public void setBuyerId(Long buyerId) {
-        this.buyerId = buyerId;
-    }
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
 
-    public UUID getItemId() {
-        return itemId;
-    }
+    public String getPickupAddress() { return pickupAddress; }
+    public void setPickupAddress(String pickupAddress) { this.pickupAddress = pickupAddress; }
 
-    public void setItemId(UUID itemId) {
-        this.itemId = itemId;
-    }
+    public BigDecimal getPickupLatitude() { return pickupLatitude; }
+    public void setPickupLatitude(BigDecimal pickupLatitude) { this.pickupLatitude = pickupLatitude; }
 
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
+    public BigDecimal getPickupLongitude() { return pickupLongitude; }
+    public void setPickupLongitude(BigDecimal pickupLongitude) { this.pickupLongitude = pickupLongitude; }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public String getPickupCode() {
-        return pickupCode;
-    }
-
-    public void setPickupCode(String pickupCode) {
-        this.pickupCode = pickupCode;
-    }
+    public String getPickupNote() { return pickupNote; }
+    public void setPickupNote(String pickupNote) { this.pickupNote = pickupNote; }
 }

@@ -10,9 +10,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import kittpas.waitem.Entity.enums.ItemStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -32,7 +35,7 @@ public class Item {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description", columnDefinition = "TEXT")
@@ -44,6 +47,21 @@ public class Item {
     @Column(name = "discounted_price", precision = 10, scale = 2)
     private BigDecimal discountedPrice;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "item_condition")
+    private String condition;
+
+    @Column(name = "expiry_date")
+    private LocalDateTime expiryDate;
+
+    @Column(name = "address_text")
+    private String addressText;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ItemStatus status;
@@ -54,101 +72,80 @@ public class Item {
     @Column(name = "longitude", precision = 10, scale = 7)
     private BigDecimal longitude;
 
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = ItemStatus.AVAILABLE;
+        }
+        if (this.quantity == null) {
+            this.quantity = 1;
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
     public Item() {
     }
 
-    public Item(UUID id, User seller, Category category, String title, String description,
-                BigDecimal originalPrice, BigDecimal discountedPrice, ItemStatus status,
-                BigDecimal latitude, BigDecimal longitude) {
-        this.id = id;
-        this.seller = seller;
-        this.category = category;
-        this.title = title;
-        this.description = description;
-        this.originalPrice = originalPrice;
-        this.discountedPrice = discountedPrice;
-        this.status = status;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-    public UUID getId() {
-        return id;
-    }
+    public User getSeller() { return seller; }
+    public void setSeller(User seller) { this.seller = seller; }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
 
-    public User getSeller() {
-        return seller;
-    }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
 
-    public void setSeller(User seller) {
-        this.seller = seller;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public Category getCategory() {
-        return category;
-    }
+    public BigDecimal getOriginalPrice() { return originalPrice; }
+    public void setOriginalPrice(BigDecimal originalPrice) { this.originalPrice = originalPrice; }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+    public BigDecimal getDiscountedPrice() { return discountedPrice; }
+    public void setDiscountedPrice(BigDecimal discountedPrice) { this.discountedPrice = discountedPrice; }
 
-    public String getTitle() {
-        return title;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-    public String getDescription() {
-        return description;
-    }
+    public String getCondition() { return condition; }
+    public void setCondition(String condition) { this.condition = condition; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public LocalDateTime getExpiryDate() { return expiryDate; }
+    public void setExpiryDate(LocalDateTime expiryDate) { this.expiryDate = expiryDate; }
 
-    public BigDecimal getOriginalPrice() {
-        return originalPrice;
-    }
+    public String getAddressText() { return addressText; }
+    public void setAddressText(String addressText) { this.addressText = addressText; }
 
-    public void setOriginalPrice(BigDecimal originalPrice) {
-        this.originalPrice = originalPrice;
-    }
+    public ItemStatus getStatus() { return status; }
+    public void setStatus(ItemStatus status) { this.status = status; }
 
-    public BigDecimal getDiscountedPrice() {
-        return discountedPrice;
-    }
+    public BigDecimal getLatitude() { return latitude; }
+    public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
 
-    public void setDiscountedPrice(BigDecimal discountedPrice) {
-        this.discountedPrice = discountedPrice;
-    }
+    public BigDecimal getLongitude() { return longitude; }
+    public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
 
-    public ItemStatus getStatus() {
-        return status;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public void setStatus(ItemStatus status) {
-        this.status = status;
-    }
-
-    public BigDecimal getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(BigDecimal latitude) {
-        this.latitude = latitude;
-    }
-
-    public BigDecimal getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(BigDecimal longitude) {
-        this.longitude = longitude;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

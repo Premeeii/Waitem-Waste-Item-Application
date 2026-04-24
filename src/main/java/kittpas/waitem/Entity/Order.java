@@ -45,6 +45,18 @@ public class Order {
     @Column(name = "pickup_code", length = 6)
     private String pickupCode;
 
+    @Column(name = "pickup_address")
+    private String pickupAddress;
+
+    @Column(name = "pickup_latitude", precision = 10, scale = 7)
+    private BigDecimal pickupLatitude;
+
+    @Column(name = "pickup_longitude", precision = 10, scale = 7)
+    private BigDecimal pickupLongitude;
+
+    @Column(name = "pickup_note", columnDefinition = "TEXT")
+    private String pickupNote;
+
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
@@ -65,80 +77,39 @@ public class Order {
     public Order() {
     }
 
-    public Order(UUID id, User buyer, Item item, OrderStatus status,
-                 BigDecimal totalPrice, String pickupCode,
-                 LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.buyer = buyer;
-        this.item = item;
-        this.status = status;
-        this.totalPrice = totalPrice;
-        this.pickupCode = pickupCode;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-    public UUID getId() {
-        return id;
-    }
+    public User getBuyer() { return buyer; }
+    public void setBuyer(User buyer) { this.buyer = buyer; }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
+    public Item getItem() { return item; }
+    public void setItem(Item item) { this.item = item; }
 
-    public User getBuyer() {
-        return buyer;
-    }
+    public OrderStatus getStatus() { return status; }
+    public void setStatus(OrderStatus status) { this.status = status; }
 
-    public void setBuyer(User buyer) {
-        this.buyer = buyer;
-    }
+    public BigDecimal getTotalPrice() { return totalPrice; }
+    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
 
-    public Item getItem() {
-        return item;
-    }
+    public String getPickupCode() { return pickupCode; }
+    public void setPickupCode(String pickupCode) { this.pickupCode = pickupCode; }
 
-    public void setItem(Item item) {
-        this.item = item;
-    }
+    public String getPickupAddress() { return pickupAddress; }
+    public void setPickupAddress(String pickupAddress) { this.pickupAddress = pickupAddress; }
 
-    public OrderStatus getStatus() {
-        return status;
-    }
+    public BigDecimal getPickupLatitude() { return pickupLatitude; }
+    public void setPickupLatitude(BigDecimal pickupLatitude) { this.pickupLatitude = pickupLatitude; }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
+    public BigDecimal getPickupLongitude() { return pickupLongitude; }
+    public void setPickupLongitude(BigDecimal pickupLongitude) { this.pickupLongitude = pickupLongitude; }
 
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
+    public String getPickupNote() { return pickupNote; }
+    public void setPickupNote(String pickupNote) { this.pickupNote = pickupNote; }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getPickupCode() {
-        return pickupCode;
-    }
-
-    public void setPickupCode(String pickupCode) {
-        this.pickupCode = pickupCode;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
