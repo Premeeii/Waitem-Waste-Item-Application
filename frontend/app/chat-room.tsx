@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Keyboard
 import { useLocalSearchParams } from 'expo-router';
 import { chatAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function ChatRoomScreen() {
   const { roomId, otherUser } = useLocalSearchParams<{ roomId: string; otherUser: string }>();
@@ -15,7 +16,6 @@ export default function ChatRoomScreen() {
   useEffect(() => {
     if (roomId) {
       loadMessages();
-      // Poll for new messages every 3 seconds (simple alternative to WebSocket on mobile)
       const interval = setInterval(loadMessages, 3000);
       return () => clearInterval(interval);
     }
@@ -49,20 +49,25 @@ export default function ChatRoomScreen() {
 
   return (
     <KeyboardAvoidingView style={s.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={90}>
+      <View style={s.header}>
+        <Text style={s.headerTitle}>{otherUser}</Text>
+      </View>
+      
       <FlatList
         ref={flatListRef}
         data={messages}
         keyExtractor={(item) => item.id}
-        onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
+        onContentSizeChange={() => flatListRef.current?.scrollToEnd({animated: true})}
+        contentContainerStyle={{ paddingVertical: 16 }}
         renderItem={({ item }) => {
           const isMe = item.senderId === userId;
           return (
             <View style={[s.msgRow, isMe && s.msgRowMe]}>
               <View style={[s.bubble, isMe ? s.bubbleMe : s.bubbleOther]}>
                 {!isMe && <Text style={s.sender}>{item.senderUsername}</Text>}
-                <Text style={[s.msgText, isMe && { color: '#fff' }]}>{item.content}</Text>
-                <Text style={[s.time, isMe && { color: 'rgba(255,255,255,0.7)' }]}>
-                  {new Date(item.createdAt).toLocaleTimeString()}
+                <Text style={[s.msgText, isMe ? s.textMe : s.textOther]}>{item.content}</Text>
+                <Text style={[s.time, isMe ? s.timeMe : s.timeOther]}>
+                  {new Date(item.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                 </Text>
               </View>
             </View>
@@ -72,10 +77,16 @@ export default function ChatRoomScreen() {
       />
 
       <View style={s.inputRow}>
-        <TextInput style={s.input} value={input} onChangeText={setInput} placeholder="Type a message..."
-          multiline onSubmitEditing={handleSend} />
-        <TouchableOpacity style={s.sendBtn} onPress={handleSend} disabled={loading || !input.trim()}>
-          <Text style={s.sendBtnText}>Send</Text>
+        <TextInput 
+          style={s.input} 
+          value={input} 
+          onChangeText={setInput} 
+          placeholder="Type a message..."
+          placeholderTextColor="#A8A39D"
+          multiline 
+        />
+        <TouchableOpacity style={[s.sendBtn, !input.trim() && { opacity: 0.5 }]} onPress={handleSend} disabled={loading || !input.trim()}>
+          <FontAwesome name="paper-plane" size={16} color="#FFF" />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -83,18 +94,30 @@ export default function ChatRoomScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f5f5' },
-  msgRow: { paddingHorizontal: 12, marginVertical: 2, alignItems: 'flex-start' },
+  container: { flex: 1, backgroundColor: '#F8F7F4' },
+  header: { padding: 16, backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#E0DCD6', alignItems: 'center' },
+  headerTitle: { fontSize: 16, fontWeight: '700', color: '#3D2C23' },
+  
+  msgRow: { paddingHorizontal: 16, marginVertical: 4, alignItems: 'flex-start' },
   msgRowMe: { alignItems: 'flex-end' },
-  bubble: { maxWidth: '75%', padding: 10, borderRadius: 16, marginVertical: 2 },
-  bubbleMe: { backgroundColor: '#007AFF', borderBottomRightRadius: 4 },
-  bubbleOther: { backgroundColor: '#e5e5ea', borderBottomLeftRadius: 4 },
-  sender: { fontSize: 11, fontWeight: '700', color: '#007AFF', marginBottom: 2 },
-  msgText: { fontSize: 15 },
-  time: { fontSize: 10, color: '#999', marginTop: 4, textAlign: 'right' },
-  empty: { textAlign: 'center', marginTop: 40, color: '#999' },
-  inputRow: { flexDirection: 'row', padding: 8, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#ddd', gap: 8 },
-  input: { flex: 1, borderWidth: 1, borderColor: '#ddd', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 8, maxHeight: 100 },
-  sendBtn: { backgroundColor: '#007AFF', paddingHorizontal: 20, borderRadius: 20, justifyContent: 'center' },
-  sendBtnText: { color: '#fff', fontWeight: '700' },
+  
+  bubble: { maxWidth: '80%', padding: 12, borderRadius: 16 },
+  bubbleMe: { backgroundColor: '#694528', borderBottomRightRadius: 4 },
+  bubbleOther: { backgroundColor: '#FFF', borderWidth: 1, borderColor: '#E0DCD6', borderBottomLeftRadius: 4 },
+  
+  sender: { fontSize: 11, fontWeight: '700', color: '#694528', marginBottom: 4 },
+  
+  msgText: { fontSize: 15, lineHeight: 20 },
+  textMe: { color: '#FFF' },
+  textOther: { color: '#3D2C23' },
+  
+  time: { fontSize: 10, marginTop: 4, textAlign: 'right' },
+  timeMe: { color: 'rgba(255,255,255,0.7)' },
+  timeOther: { color: '#A8A39D' },
+  
+  empty: { textAlign: 'center', marginTop: 40, color: '#7A7571' },
+  
+  inputRow: { flexDirection: 'row', padding: 12, backgroundColor: '#FFF', borderTopWidth: 1, borderTopColor: '#E0DCD6', alignItems: 'flex-end', gap: 10 },
+  input: { flex: 1, borderWidth: 1, borderColor: '#E0DCD6', borderRadius: 20, paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12, maxHeight: 100, backgroundColor: '#F8F7F4', color: '#3D2C23', minHeight: 44 },
+  sendBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#694528', justifyContent: 'center', alignItems: 'center' },
 });
