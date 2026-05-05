@@ -1,12 +1,16 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
 
 function TabIcon(props: { name: React.ComponentProps<typeof FontAwesome>['name']; color: string }) {
   return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
 }
 
 export default function TabLayout() {
+  const { role } = useAuth();
+  const isSeller = role === 'SELLER';
+
   return (
     <Tabs screenOptions={{ 
       tabBarActiveTintColor: '#61412A',
@@ -31,7 +35,7 @@ export default function TabLayout() {
     }}>
       <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: ({ color }) => <TabIcon name="home" color={color} />, headerShown: false }} />
       <Tabs.Screen name="listings" options={{ href: null }} />
-      <Tabs.Screen name="add" options={{ title: 'Add', tabBarIcon: ({ color }) => <TabIcon name="plus-circle" color={color} />, headerShown: false }} />
+      <Tabs.Screen name="add" options={isSeller ? { title: 'Add', tabBarIcon: ({ color }) => <TabIcon name="plus-circle" color={color} />, headerShown: false } : { href: null }} />
       <Tabs.Screen name="orders" options={{ title: 'Orders', tabBarIcon: ({ color }) => <TabIcon name="file-text-o" color={color} /> }} />
       <Tabs.Screen name="chat" options={{ title: 'Chat', tabBarIcon: ({ color }) => <TabIcon name="comments-o" color={color} />, headerShown: false }} />
       <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: ({ color }) => <TabIcon name="user-o" color={color} /> }} />

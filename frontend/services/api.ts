@@ -29,7 +29,7 @@ api.interceptors.request.use(async (config) => {
 
 // ============ AUTH ============
 export const authAPI = {
-  register: (data: { username: string; password: string; firstname?: string; lastname?: string; email?: string; phone?: string }) =>
+  register: (data: { username: string; password: string; firstname?: string; lastname?: string; email?: string; phone?: string; role?: string }) =>
     api.post('/auth/register', data),
   login: (data: { username: string; password: string }) =>
     api.post('/auth/login', data),

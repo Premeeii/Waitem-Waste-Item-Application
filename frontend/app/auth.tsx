@@ -11,6 +11,7 @@ export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [role, setRole] = useState('USER');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -30,13 +31,14 @@ export default function AuthScreen() {
     try {
       let res;
       if (isRegister) {
-        res = await authAPI.register({ username, password, email, firstname: '', lastname: '', phone: '' });
+        res = await authAPI.register({ username, password, email, firstname: '', lastname: '', phone: '', role });
       } else {
         res = await authAPI.login({ username, password });
       }
-      const { token, userId, username: uname, role } = res.data;
-      await login(token, userId, uname, role);
-      router.push('/');
+      const { token, userId, username: uname, role: userRole } = res.data;
+      console.log('Auth response role:', userRole);
+      await login(token, userId, uname, userRole);
+      router.replace('/');
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message;
       setErrorMsg(msg);
@@ -95,6 +97,26 @@ export default function AuthScreen() {
         </View>
       )}
 
+      {isRegister && (
+        <View style={s.inputContainer}>
+          <Text style={s.label}>Account Type</Text>
+          <View style={s.roleRow}>
+            <TouchableOpacity 
+              style={[s.roleBtn, role === 'BUYER' && s.activeRoleBtn]} 
+              onPress={() => setRole('BUYER')}
+            >
+              <Text style={[s.roleBtnText, role === 'BUYER' && s.activeRoleText]}>Buyer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[s.roleBtn, role === 'SELLER' && s.activeRoleBtn]} 
+              onPress={() => setRole('SELLER')}
+            >
+              <Text style={[s.roleBtnText, role === 'SELLER' && s.activeRoleText]}>Seller</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
       <View style={s.inputContainer}>
         <View style={s.passwordHeader}>
           <Text style={s.label}>Password</Text>
@@ -144,6 +166,11 @@ const s = StyleSheet.create({
   inputIcon: { marginRight: 10 },
   inputIconRight: { marginLeft: 10 },
   input: { flex: 1, paddingVertical: 14, fontSize: 16, color: '#3D2C23' },
+  roleRow: { flexDirection: 'row', gap: 12 },
+  roleBtn: { flex: 1, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#E0DCD6', alignItems: 'center', backgroundColor: '#FFF' },
+  activeRoleBtn: { borderColor: '#694528', backgroundColor: '#694528' },
+  roleBtnText: { fontSize: 15, fontWeight: '600', color: '#3D2C23' },
+  activeRoleText: { color: '#FFF' },
   btn: { backgroundColor: '#694528', padding: 16, borderRadius: 8, alignItems: 'center', marginTop: 12 },
   btnText: { color: '#FFF', fontSize: 16, fontWeight: '600' },
   footer: { flexDirection: 'row', justifyContent: 'center', marginTop: 32 },

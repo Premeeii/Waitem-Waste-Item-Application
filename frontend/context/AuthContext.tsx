@@ -1,5 +1,30 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const setStorageItem = async (key: string, value: string) => {
+  if (Platform.OS === 'web') {
+    try { localStorage.setItem(key, value); } catch (e) { console.error(e); }
+  } else {
+    await AsyncStorage.setItem(key, value);
+  }
+};
+
+const getStorageItem = async (key: string) => {
+  if (Platform.OS === 'web') {
+    try { return localStorage.getItem(key); } catch (e) { console.error(e); return null; }
+  } else {
+    return await AsyncStorage.getItem(key);
+  }
+};
+
+const removeStorageItem = async (key: string) => {
+  if (Platform.OS === 'web') {
+    try { localStorage.removeItem(key); } catch (e) { console.error(e); }
+  } else {
+    await AsyncStorage.removeItem(key);
+  }
+};
 
 type AuthContextType = {
   token: string | null;
@@ -29,10 +54,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const loadAuth = async () => {
-    const t = await AsyncStorage.getItem('token');
-    const uid = await AsyncStorage.getItem('userId');
-    const uname = await AsyncStorage.getItem('username');
-    const r = await AsyncStorage.getItem('role');
+    const t = await getStorageItem('token');
+    const uid = await getStorageItem('userId');
+    const uname = await getStorageItem('username');
+    const r = await getStorageItem('role');
     if (t) {
       setToken(t);
       setUserId(uid ? parseInt(uid) : null);
@@ -42,10 +67,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const login = async (t: string, uid: number, uname: string, r: string) => {
-    await AsyncStorage.setItem('token', t);
-    await AsyncStorage.setItem('userId', uid.toString());
-    await AsyncStorage.setItem('username', uname);
-    await AsyncStorage.setItem('role', r);
+    await setStorageItem('token', t);
+    await setStorageItem('userId', uid.toString());
+    await setStorageItem('username', uname);
+    await setStorageItem('role', r);
     setToken(t);
     setUserId(uid);
     setUsername(uname);
@@ -53,10 +78,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('userId');
-    await AsyncStorage.removeItem('username');
-    await AsyncStorage.removeItem('role');
+    if (Platform.OS === 'web') {
+      try { localStorage.clear(); } catch (e) { console.error(e); }
+    } else {
+      await AsyncStorage.clear();
+    }
     setToken(null);
     setUserId(null);
     setUsername(null);

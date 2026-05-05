@@ -74,7 +74,7 @@ public class User {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         if (this.role == null) {
-            this.role = UserRole.USER;
+            this.role = UserRole.BUYER;
         }
     }
 

@@ -41,7 +41,12 @@ public class UserService {
         user.setLastname(request.getLastname());
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
-        user.setRole(UserRole.USER);
+        
+        if (request.getRole() != null && request.getRole().equalsIgnoreCase("SELLER")) {
+            user.setRole(UserRole.SELLER);
+        } else {
+            user.setRole(UserRole.BUYER);
+        }
 
         User savedUser = userRepository.save(user);
 
